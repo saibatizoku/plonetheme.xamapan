@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules
+    xmlns="http://namespaces.plone.org/diazo"
+    xmlns:css="http://namespaces.plone.org/diazo/css"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    >
+    <replace theme="/html/head/title" content="/html/head/title" />
+
+
+
+    <theme href="base.html" css:if-content="#visual-portal-wrapper"/>
+    <theme href="html5slides/template/index.html" css:if-content=".presentation"/>
+    <rules css:if-content=".presentation">
+        <replace css:theme-children="section">
+            <xsl:for-each css:select=".slide">
+                <article><xsl:attribute name="class">
+                        <xsl:if test="position()=1">
+                            slide-firstpage
+                        </xsl:if>
+                    </xsl:attribute>
+                    <xsl:copy-of select="current()"/>
+                </article>
+            </xsl:for-each>
+        </replace>
+    </rules>
+
+    <!--    
+    <notheme if-content="html/head/link[@href='/manage_page_style.css']"/>
+    <notheme css:if-content="#content.dialog-wrapper"/>
+    <notheme css:if-content="body.popup"/>
+    -->
+    <rules css:if-content="#visual-portal-wrapper">
+
+
+        <prepend theme="/html/head" content="/html/head/base"/>
+
+        <replace theme="//*[@id='logo']/h1" content="//*[@id='content']/h1"/>
+        <drop css:content="#portal-logo" />
+
+
+        <prepend theme="/html/head" 
+            content="/html/head/link | /html/head/style | /html/head/script | /html/head/meta" />
+
+        <append css:theme="#header">
+            <xsl:if css:test=".AbovePortletManager1">
+                <div id="portletHeader">
+                    <xsl:for-each css:select=".AbovePortletManager1 .portletWrapper">
+                        <xi:include href="portlet-rules.xml"/>
+                    </xsl:for-each>
+                </div>
+            </xsl:if>
+        </append>
+
+        <copy css:theme="#topsearchbox" css:content="#portal-searchbox form" attributes="action"/>
+        <replace css:theme="#center-column">
+            <div id="center-column"><xsl:attribute name="class">
+                    <xsl:if test='contains(//*[@id="portal-column-content"]/@class,"width-3:4")'>
+                        twocolumns span9
+                    </xsl:if>
+                    <xsl:if test='contains(//*[@id="portal-column-content"]/@class,"width-1:2")'>
+                        threecolumns span6
+                    </xsl:if>
+                    <xsl:if test='contains(//*[@id="portal-column-content"]/@class,"width-full")'>
+                        nocolumns span12
+                    </xsl:if>
+                </xsl:attribute>
+                <xsl:if css:test=".AbovePortletManager2">
+                    <div id="portletAboveContent">
+                        <xsl:for-each css:select=".AbovePortletManager2 .portletWrapper">
+                            <xi:include href="portlet-rules.xml"/>
+                        </xsl:for-each>
+                    </div>
+                </xsl:if>
+                <div id="#viewlet-above-content">
+                    <xsl:for-each css:select="#viewlet-above-content > *">
+                        <xsl:if test="@id">
+                            <xsl:if test="@id!='portlets-above' and
+                                @id!='portal-breadcrumbs'">
+                                <xsl:copy-of select="current()"/>
+                            </xsl:if>
+                        </xsl:if>
+                        <xsl:if test="not(@id)">
+                            <xsl:copy-of select="current()"/>
+                        </xsl:if>
+                    </xsl:for-each>
+                </div>
+                <article>
+                    <xsl:copy-of css:select="#kssPortalMessage"/>
+                    <xsl:for-each css:select=".portalMessage">
+                        <xsl:if test="not(contains(@id,'kssPortalMessage'))">
+                            <div><xsl:attribute name="class">
+                                    alert alert-<xsl:value-of select="@class"/>
+                                    </xsl:attribute><xsl:attribute name="id">
+                                    <xsl:value-of select="@id"/>
+                                    </xsl:attribute><xsl:attribute name="style">
+                                    <xsl:value-of select="@style"/>
+                                </xsl:attribute>
+                                <xsl:copy-of select="dd/node()"/>
+                            </div>
+                        </xsl:if>
+                    </xsl:for-each>
+                    <div id="action-bar">
+                        <ul class="nav-tabs">
+                            <xsl:for-each css:select="#content-views > li">
+                                <xi:include href="navigation-rules.xml"/>
+                            </xsl:for-each>
+                            <xsl:for-each css:select="#contentActionMenus > li">
+                                <li class="dropdown" data-dropdown="dropdown" style="float:right">
+                                    <a class="dropdown-toggle" href="#"><xsl:attribute name="href">
+                                            <xsl:value-of select="dl/dt/a/@href"/>
+                                        </xsl:attribute>
+                                        <xsl:copy-of select="dl/dt/a/span"/>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" style="min-width:150px;">
+                                        <xsl:for-each css:select=".actionMenuContent > ul > li">
+                                            <xsl:copy-of select="current()"/>
+                                        </xsl:for-each>
+                                    </ul>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+
+                    <xsl:apply-templates css:select="#content"/>
+                </article>
+                <div class="visualClear"/>
+                <div id="#viewlet-below-content">
+                    <xsl:for-each css:select="#viewlet-below-content > *">
+                        <xsl:if test="@id">
+                            <xsl:if test="@id!='portlets-below'">
+                                <xsl:copy-of select="current()"/>
+                            </xsl:if>
+                        </xsl:if>
+                        <xsl:if test="not(@id)">
+                            <xsl:copy-of select="current()"/>
+                        </xsl:if>
+                    </xsl:for-each>
+                </div>
+            </div>
+        </replace>
+        <drop css:content="#enable_cookies_message"/>
+        <drop css:theme=".hero-unit" css:if-not-content=".section-front-page"/>
+        <drop css:theme="#left-column" css:if-not-content="#portal-column-one"/>
+        <drop css:theme="#right-column" css:if-not-content="#portal-column-two"/>
+
+
+        <replace css:theme="#logo" css:content="#portal-logo"/>
+
+        <replace css:theme-children="#nav">
+            <xsl:for-each css:select="#portal-globalnav > li">
+                <xi:include href="navigation-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+        <replace css:theme-children="#personaltool-menu" 
+            css:content-children="#portal-personaltools ul"/>
+        <replace css:theme-children="#personaltool-menuheader" 
+            css:content-children="#portal-personaltools .actionMenuHeader a"/>
+        <replace css:theme-children="#secondary-nav" css:if-content="#anon-personalbar">
+            <li><xsl:copy-of css:select="#personaltools-login"/></li>
+        </replace>
+
+        <copy css:theme=".navbar-fixed-top .brand" css:content="#portal-logo" attributes="href"/>
+        <replace css:theme-children=".breadcrumb">
+            <xsl:for-each css:select="#portal-breadcrumbs > span">
+                <li>
+                    <xsl:copy-of select="node()"/>
+                </li>
+            </xsl:for-each>
+        </replace>
+
+        <append css:theme=".footer" css:content-children="#portal-footer"/>
+        <append css:theme=".footer" css:content="#portal-colophon"/>
+        <append css:theme=".footer" css:content="div#visual-portal-wrapper > div.row > script"/>
+
+        <append css:theme="#left-column-content"
+            css:content="#portletmanager-plone-leftcolumn"/>
+        <replace css:theme-children="#left-column-content">
+            <div>
+                <xsl:for-each css:select="#portal-column-one .portletWrapper">
+                    <xi:include href="portlet-rules.xml"/>
+                </xsl:for-each>
+                <xsl:copy-of css:select="#portal-column-one .managePortletsLink"/>
+            </div>
+        </replace>
+
+        <append css:theme="#right-column-content"
+            css:content="#portletmanager-plone-rightcolumn"/>
+        <replace css:theme-children="#right-column-content">
+            <div>
+                <xsl:for-each css:select="#portal-column-two .portletWrapper">
+                    <xi:include href="portlet-rules.xml"/>
+                </xsl:for-each>
+                <xsl:copy-of css:select="#portal-column-two .managePortletsLink"/>
+            </div>
+        </replace>
+
+        <replace css:theme-children="#portletBelowContentA">
+            <xsl:for-each css:select=".BelowPortletManager1 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+        <replace css:theme-children="#portletBelowContentB">
+            <xsl:for-each css:select=".BelowPortletManager2 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+        <replace css:theme-children="#portletBelowContentC">
+            <xsl:for-each css:select=".BelowPortletManager3 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+        <replace css:theme-children="#portletBelowContentD">
+            <xsl:for-each css:select=".BelowPortletManager4 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+        <replace css:theme-children="#portletFooterA">
+            <xsl:for-each css:select=".FooterPortletManager1 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+        <replace css:theme-children="#portletFooterB">
+            <xsl:for-each css:select=".FooterPortletManager2 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+        <replace css:theme-children="#portletFooterC">
+            <xsl:for-each css:select=".FooterPortletManager3 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+
+        <replace css:theme-children="#portletFooterD">
+            <xsl:for-each css:select=".FooterPortletManager4 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+        <replace css:theme-children="#portletFooterE">
+            <xsl:for-each css:select=".FooterPortletManager5 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+
+        <replace css:theme-children="#portletFooterF">
+            <xsl:for-each css:select=".FooterPortletManager6 .portletWrapper">
+                <xi:include href="portlet-rules.xml"/>
+            </xsl:for-each>
+        </replace>
+
+    </rules>
+</rules>

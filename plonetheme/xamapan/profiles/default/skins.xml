@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<object name="portal_skins" allow_any="False" cookie_persistence="False">
+
+ <object name="plonetheme_xamapan"
+    meta_type="Filesystem Directory View"
+    directory="plonetheme.xamapan:skins/plonetheme_xamapan"/>
+
+ <skin-path name="*">
+  <layer name="plonetheme_xamapan"
+     insert-after="custom"/>
+ </skin-path>
+
+</object>
+
