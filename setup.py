@@ -25,6 +25,7 @@ setup(name='plonetheme.xamapan',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'plone.app.theming',
       ],
       entry_points="""
       # -*- Entry points: -*-
