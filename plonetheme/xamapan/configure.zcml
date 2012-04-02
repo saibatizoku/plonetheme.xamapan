@@ -1,11 +1,22 @@
-<configure
+<configure 
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="plonetheme.xamapan">
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    >
 
-  <five:registerPackage package="." initialize=".initialize" />
+  <plone:static directory="static" type="theme" />
 
-  <!-- -*- extra stuff goes here -*- -->
-  
+  <!-- File System Directory Views registration -->
+  <cmf:registerDirectory name="plonetheme_xamapan"/>
+
+
+  <genericsetup:registerProfile
+      name="default"
+      title="plonetheme.xamapan"
+      directory="profiles/default"
+      description='Skin overrides for plonetheme.xamapan'
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
 </configure>
